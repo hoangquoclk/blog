@@ -22,7 +22,7 @@ func (u *UserRepositoryImpl) Save(ctx context.Context, user model.User) {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "insert into users(username, password, email) values($1, $2, $3)"
+	SQL := "insert into users(username, password, email) values (?, ?, ?)"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, user.Username, user.Password, user.Email)
 
@@ -47,7 +47,7 @@ func (u *UserRepositoryImpl) Delete(ctx context.Context, userId int) {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "delete from users where id=$1"
+	SQL := "delete from users where id=?"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, userId)
 	helper.PanicIfErrors(errQuery)
@@ -59,7 +59,7 @@ func (u *UserRepositoryImpl) FindById(ctx context.Context, userId int) (model.Us
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, username from users where id=$1"
+	SQL := "select id, username from users where id=?"
 	result, errExec := tx.QueryContext(ctx, SQL, userId)
 	helper.PanicIfErrors(errExec)
 	defer result.Close()

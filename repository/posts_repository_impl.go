@@ -22,7 +22,7 @@ func (p *PostRepositoryImpl) Save(ctx context.Context, post model.Post) {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "insert into posts(title, category_id, user_id, content) values($1, $2, $3, $4)"
+	SQL := "insert into posts(title, category_id, user_id, content) values(?, ?, ?, ?)"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, post.Title, post.CategoryId, post.UserId, post.Content)
 
@@ -36,7 +36,7 @@ func (p *PostRepositoryImpl) Update(ctx context.Context, post model.Post) {
 	defer helper.CommitOrRollback(tx)
 
 	SQL := "update posts set title=:title, category_id=:category_id, user_id=:user_id, content=:content where id=:id"
-	//SQL := "update users set username=$1, password=$2, email=$3 where id=$4"
+
 	_, errQuery := tx.ExecContext(ctx, SQL, post)
 	helper.PanicIfErrors(errQuery)
 }
@@ -47,7 +47,7 @@ func (p *PostRepositoryImpl) Delete(ctx context.Context, postId int) {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "delete from posts where id=$1"
+	SQL := "delete from posts where id=?"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, postId)
 	helper.PanicIfErrors(errQuery)
@@ -59,7 +59,7 @@ func (p *PostRepositoryImpl) FindById(ctx context.Context, postId int) (model.Po
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, title, category_id, user_id, content from posts where id=$1"
+	SQL := "select id, title, category_id, user_id, content from posts where id=?"
 	result, errExec := tx.QueryContext(ctx, SQL, postId)
 	helper.PanicIfErrors(errExec)
 	defer result.Close()

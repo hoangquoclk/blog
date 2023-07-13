@@ -22,7 +22,7 @@ func (c *CommentRepositoryImpl) Save(ctx context.Context, comment model.Comment)
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "insert into comments(post_id, user_id, content) values($1, $2, $3)"
+	SQL := "insert into comments(post_id, user_id, content) values(?, ? ,?)"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, comment.PostId, comment.UserId, comment.Content)
 
@@ -47,7 +47,7 @@ func (c *CommentRepositoryImpl) Delete(ctx context.Context, commentId int) {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "delete from comments where id=$1"
+	SQL := "delete from comments where id=?"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, commentId)
 	helper.PanicIfErrors(errQuery)
@@ -59,7 +59,7 @@ func (c *CommentRepositoryImpl) FindById(ctx context.Context, commentId int) (mo
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, post_id, user_id, content from comments where id=$1"
+	SQL := "select id, post_id, user_id, content from comments where id=?"
 	result, errExec := tx.QueryContext(ctx, SQL, commentId)
 	helper.PanicIfErrors(errExec)
 	defer result.Close()
