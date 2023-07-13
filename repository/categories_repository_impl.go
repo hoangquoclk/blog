@@ -22,7 +22,7 @@ func (c *CategoryRepositoryImpl) Save(ctx context.Context, category model.Catego
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "insert into categories(name) values ($1)"
+	SQL := "insert into categories(name) values (?)"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, category.Id)
 
@@ -47,7 +47,7 @@ func (c *CategoryRepositoryImpl) Delete(ctx context.Context, categoryId int) {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "delete from categories where id=$1"
+	SQL := "delete from categories where id=?"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, categoryId)
 	helper.PanicIfErrors(errQuery)
@@ -59,7 +59,7 @@ func (c *CategoryRepositoryImpl) FindById(ctx context.Context, categoryId int) (
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, name from categories where id=$1"
+	SQL := "select id, name from categories where id=?"
 	result, errQuery := tx.QueryContext(ctx, SQL, categoryId)
 	helper.PanicIfErrors(errQuery)
 	defer result.Close()
