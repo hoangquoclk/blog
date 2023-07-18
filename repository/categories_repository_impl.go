@@ -24,7 +24,7 @@ func (c *CategoryRepositoryImpl) Save(ctx context.Context, category model.Catego
 
 	SQL := "insert into categories(name) values (?)"
 
-	_, errQuery := tx.ExecContext(ctx, SQL, category.Id)
+	_, errQuery := tx.ExecContext(ctx, SQL, category.Name)
 
 	helper.PanicIfErrors(errQuery)
 }

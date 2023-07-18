@@ -16,7 +16,7 @@ func NewCommentRepository(Db *sql.DB) CommentRepository {
 	return &CommentRepositoryImpl{Db: Db}
 }
 
-// Save implement UsersRepository
+// Save implement CommentsRepository
 func (c *CommentRepositoryImpl) Save(ctx context.Context, comment model.Comment) {
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
@@ -29,7 +29,7 @@ func (c *CommentRepositoryImpl) Save(ctx context.Context, comment model.Comment)
 	helper.PanicIfErrors(errQuery)
 }
 
-// Update implements UsersRepository
+// Update implements CommentsRepository
 func (c *CommentRepositoryImpl) Update(ctx context.Context, comment model.Comment) {
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
@@ -41,7 +41,7 @@ func (c *CommentRepositoryImpl) Update(ctx context.Context, comment model.Commen
 	helper.PanicIfErrors(errQuery)
 }
 
-// Delete implements UsersRepository
+// Delete implements CommentsRepository
 func (c *CommentRepositoryImpl) Delete(ctx context.Context, commentId int) {
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
@@ -53,7 +53,7 @@ func (c *CommentRepositoryImpl) Delete(ctx context.Context, commentId int) {
 	helper.PanicIfErrors(errQuery)
 }
 
-// FindById implements UsersRepository
+// FindById implements CommentsRepository
 func (c *CommentRepositoryImpl) FindById(ctx context.Context, commentId int) (model.Comment, error) {
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
@@ -81,7 +81,7 @@ func (c *CommentRepositoryImpl) FindAll(ctx context.Context) []model.Comment {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, post_id, user_id, content from users"
+	SQL := "select id, post_id, user_id, content from comments"
 	result, errQuery := tx.QueryContext(ctx, SQL)
 	helper.PanicIfErrors(errQuery)
 	defer result.Close()
