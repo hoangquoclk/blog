@@ -19,8 +19,10 @@ func NewPostServiceImpl(postRepository repository.PostRepository) PostService {
 
 func (p *PostServiceImpl) Create(ctx context.Context, request request.PostCreateRequest) {
 	post := model.Post{
-		Title:   request.Title,
-		Content: request.Content,
+		Title:      request.Title,
+		Content:    request.Content,
+		UserId:     request.UserId,
+		CategoryId: request.CategoryId,
 	}
 	p.PostRepository.Save(ctx, post)
 }
