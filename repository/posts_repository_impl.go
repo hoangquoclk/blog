@@ -67,7 +67,7 @@ func (p *PostRepositoryImpl) FindById(ctx context.Context, postId int) (model.Po
 	post := model.Post{}
 
 	if result.Next() {
-		err := result.Scan(&post.Id, &post.Title, post.CategoryId, post.UserId, post.Content)
+		err := result.Scan(&post.Id, &post.Title, &post.CategoryId, &post.UserId, &post.Content)
 		helper.PanicIfErrors(err)
 		return post, nil
 	} else {
