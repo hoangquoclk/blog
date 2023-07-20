@@ -20,6 +20,8 @@ func NewCommentServiceImpl(commentRepository repository.CommentRepository) Comme
 func (c *CommentServiceImpl) Create(ctx context.Context, request request.CommentCreateRequest) {
 	comment := model.Comment{
 		Content: request.Content,
+		UserId:  request.UserId,
+		PostId:  request.PostId,
 	}
 	c.CommentRepository.Save(ctx, comment)
 }
