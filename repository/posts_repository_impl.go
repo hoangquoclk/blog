@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"example/blog/helper"
 	"example/blog/model"
 )
@@ -60,19 +59,19 @@ func (p *PostRepositoryImpl) FindById(ctx context.Context, postId int) (model.Po
 	defer helper.CommitOrRollback(tx)
 
 	SQL := "select id, title, category_id, user_id, content from posts where id=?"
-	result, errExec := tx.QueryContext(ctx, SQL, postId)
-	helper.PanicIfErrors(errExec)
-	defer result.Close()
-
 	post := model.Post{}
 
-	if result.Next() {
-		err := result.Scan(&post.Id, &post.Title, post.CategoryId, post.UserId, post.Content)
+	results, err := tx.Query(SQL, postId)
+	if err != nil {
 		helper.PanicIfErrors(err)
-		return post, nil
-	} else {
-		return post, errors.New("post id not found")
 	}
+	for results.Next() {
+		err = results.Scan(&post.Id, &post.Title, &post.CategoryId, &post.UserId, &post.Content)
+		if err != nil {
+			helper.PanicIfErrors(err)
+		}
+	}
+	return post, nil
 }
 
 // FindAll implements PostsRepository
