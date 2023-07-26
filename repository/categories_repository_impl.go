@@ -6,6 +6,7 @@ import (
 	"errors"
 	"example/blog/helper"
 	"example/blog/model"
+	"github.com/google/uuid"
 )
 
 type CategoryRepositoryImpl struct {
@@ -18,13 +19,14 @@ func NewCategoryRepository(Db *sql.DB) CategoryRepository {
 
 // Save implement CategoriesRepository
 func (c *CategoryRepositoryImpl) Save(ctx context.Context, category model.Category) {
+	uuid := uuid.New()
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "insert into categories(name) values (?)"
+	SQL := "insert into categories(id, name) values (?, ?)"
 
-	_, errQuery := tx.ExecContext(ctx, SQL, category.Name)
+	_, errQuery := tx.ExecContext(ctx, SQL, uuid, category.Name)
 
 	helper.PanicIfErrors(errQuery)
 }
@@ -42,7 +44,7 @@ func (c *CategoryRepositoryImpl) Update(ctx context.Context, category model.Cate
 }
 
 // Delete implements CategoriesRepository
-func (c *CategoryRepositoryImpl) Delete(ctx context.Context, categoryId int) {
+func (c *CategoryRepositoryImpl) Delete(ctx context.Context, categoryId string) {
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
@@ -54,7 +56,7 @@ func (c *CategoryRepositoryImpl) Delete(ctx context.Context, categoryId int) {
 }
 
 // FindById implements CategoriesRepository
-func (c *CategoryRepositoryImpl) FindById(ctx context.Context, categoryId int) (model.Category, error) {
+func (c *CategoryRepositoryImpl) FindById(ctx context.Context, categoryId string) (model.Category, error) {
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)

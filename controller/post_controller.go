@@ -7,7 +7,6 @@ import (
 	"example/blog/service"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"strconv"
 )
 
 type PostController struct {
@@ -33,11 +32,7 @@ func (controller *PostController) Update(writer http.ResponseWriter, requests *h
 	helper.ReadRequestBody(requests, &postUpdateRequest)
 
 	postId := params.ByName("postId")
-
-	id, err := strconv.Atoi(postId)
-
-	helper.PanicIfErrors(err)
-	postUpdateRequest.Id = id
+	postUpdateRequest.Id = postId
 
 	controller.PostService.Update(requests.Context(), postUpdateRequest)
 	webResponse := response.WebResponse{Code: 200, Status: "Ok", Data: nil}
@@ -47,10 +42,8 @@ func (controller *PostController) Update(writer http.ResponseWriter, requests *h
 
 func (controller *PostController) Delete(writer http.ResponseWriter, requests *http.Request, params httprouter.Params) {
 	postId := params.ByName("postId")
-	id, err := strconv.Atoi(postId)
-	helper.PanicIfErrors(err)
 
-	controller.PostService.Delete(requests.Context(), id)
+	controller.PostService.Delete(requests.Context(), postId)
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "Ok",
@@ -62,10 +55,8 @@ func (controller *PostController) Delete(writer http.ResponseWriter, requests *h
 
 func (controller *PostController) FindById(writer http.ResponseWriter, requests *http.Request, params httprouter.Params) {
 	postId := params.ByName("postId")
-	id, err := strconv.Atoi(postId)
-	helper.PanicIfErrors(err)
 
-	result := controller.PostService.FindById(requests.Context(), id)
+	result := controller.PostService.FindById(requests.Context(), postId)
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "Ok",

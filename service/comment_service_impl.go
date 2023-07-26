@@ -34,13 +34,13 @@ func (c *CommentServiceImpl) Update(ctx context.Context, request request.Comment
 	c.CommentRepository.Update(ctx, comment)
 }
 
-func (c *CommentServiceImpl) Delete(ctx context.Context, commentId int) {
+func (c *CommentServiceImpl) Delete(ctx context.Context, commentId string) {
 	comment, err := c.CommentRepository.FindById(ctx, commentId)
 	helper.PanicIfErrors(err)
 	c.CommentRepository.Delete(ctx, comment.Id)
 }
 
-func (c *CommentServiceImpl) FindById(ctx context.Context, commentId int) response.CommentResponse {
+func (c *CommentServiceImpl) FindById(ctx context.Context, commentId string) response.CommentResponse {
 	comment, err := c.CommentRepository.FindById(ctx, commentId)
 	helper.PanicIfErrors(err)
 	return response.CommentResponse(comment)

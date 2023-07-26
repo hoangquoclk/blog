@@ -9,7 +9,7 @@ import (
 type CommentService interface {
 	Create(ctx context.Context, request request.CommentCreateRequest)
 	Update(ctx context.Context, request request.CommentUpdateRequest)
-	Delete(ctx context.Context, userId int)
-	FindById(ctx context.Context, userId int) response.CommentResponse
+	Delete(ctx context.Context, userId string)
+	FindById(ctx context.Context, userId string) response.CommentResponse
 	FindAll(ctx context.Context) []response.CommentResponse
 }

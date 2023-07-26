@@ -6,6 +6,7 @@ import (
 	"errors"
 	"example/blog/helper"
 	"example/blog/model"
+	uuid2 "github.com/google/uuid"
 )
 
 type CommentRepositoryImpl struct {
@@ -18,13 +19,14 @@ func NewCommentRepository(Db *sql.DB) CommentRepository {
 
 // Save implement CommentsRepository
 func (c *CommentRepositoryImpl) Save(ctx context.Context, comment model.Comment) {
+	uuid := uuid2.New()
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "insert into comments(post_id, user_id, content) values(?, ? ,?)"
+	SQL := "insert into comments(id, postId, userId, content) values(?, ?, ? ,?)"
 
-	_, errQuery := tx.ExecContext(ctx, SQL, comment.PostId, comment.UserId, comment.Content)
+	_, errQuery := tx.ExecContext(ctx, SQL, uuid, comment.PostId, comment.UserId, comment.Content)
 
 	helper.PanicIfErrors(errQuery)
 }
@@ -35,14 +37,14 @@ func (c *CommentRepositoryImpl) Update(ctx context.Context, comment model.Commen
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "update comments set post_id=:post_id, user_id=:user_id, content=:content where id=:id"
+	SQL := "update comments set postId=:postId, userId=:userId, content=:content where id=:id"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, comment)
 	helper.PanicIfErrors(errQuery)
 }
 
 // Delete implements CommentsRepository
-func (c *CommentRepositoryImpl) Delete(ctx context.Context, commentId int) {
+func (c *CommentRepositoryImpl) Delete(ctx context.Context, commentId string) {
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
@@ -54,12 +56,12 @@ func (c *CommentRepositoryImpl) Delete(ctx context.Context, commentId int) {
 }
 
 // FindById implements CommentsRepository
-func (c *CommentRepositoryImpl) FindById(ctx context.Context, commentId int) (model.Comment, error) {
+func (c *CommentRepositoryImpl) FindById(ctx context.Context, commentId string) (model.Comment, error) {
 	tx, err := c.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, post_id, user_id, content from comments where id=?"
+	SQL := "select id, postId, userId, content from comments where id=?"
 	result, errExec := tx.QueryContext(ctx, SQL, commentId)
 	helper.PanicIfErrors(errExec)
 	defer result.Close()
@@ -81,7 +83,7 @@ func (c *CommentRepositoryImpl) FindAll(ctx context.Context) []model.Comment {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, post_id, user_id, content from comments"
+	SQL := "select id, postId, userId, content from comments"
 	result, errQuery := tx.QueryContext(ctx, SQL)
 	helper.PanicIfErrors(errQuery)
 	defer result.Close()

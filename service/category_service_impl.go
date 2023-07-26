@@ -32,14 +32,14 @@ func (c *CategoryServiceImpl) Update(ctx context.Context, request request.Catego
 	c.CategoryRepository.Update(ctx, category)
 }
 
-func (c *CategoryServiceImpl) Delete(ctx context.Context, postId int) {
-	category, err := c.CategoryRepository.FindById(ctx, postId)
+func (c *CategoryServiceImpl) Delete(ctx context.Context, categoryId string) {
+	category, err := c.CategoryRepository.FindById(ctx, categoryId)
 	helper.PanicIfErrors(err)
 	c.CategoryRepository.Delete(ctx, category.Id)
 }
 
-func (c *CategoryServiceImpl) FindById(ctx context.Context, postId int) response.CategoryResponse {
-	category, err := c.CategoryRepository.FindById(ctx, postId)
+func (c *CategoryServiceImpl) FindById(ctx context.Context, categoryId string) response.CategoryResponse {
+	category, err := c.CategoryRepository.FindById(ctx, categoryId)
 	helper.PanicIfErrors(err)
 	return response.CategoryResponse(category)
 }

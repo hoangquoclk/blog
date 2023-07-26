@@ -7,7 +7,6 @@ import (
 	"example/blog/service"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"strconv"
 )
 
 type CommentController struct {
@@ -34,10 +33,7 @@ func (controller *CommentController) Update(writer http.ResponseWriter, requests
 
 	commentId := params.ByName("commentId")
 
-	id, err := strconv.Atoi(commentId)
-
-	helper.PanicIfErrors(err)
-	commentUpdateRequest.Id = id
+	commentUpdateRequest.Id = commentId
 
 	controller.CommentService.Update(requests.Context(), commentUpdateRequest)
 	webResponse := response.WebResponse{Code: 200, Status: "Ok", Data: nil}
@@ -47,10 +43,8 @@ func (controller *CommentController) Update(writer http.ResponseWriter, requests
 
 func (controller *CommentController) Delete(writer http.ResponseWriter, requests *http.Request, params httprouter.Params) {
 	commentId := params.ByName("commentId")
-	id, err := strconv.Atoi(commentId)
-	helper.PanicIfErrors(err)
 
-	controller.CommentService.Delete(requests.Context(), id)
+	controller.CommentService.Delete(requests.Context(), commentId)
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "Ok",
@@ -62,10 +56,8 @@ func (controller *CommentController) Delete(writer http.ResponseWriter, requests
 
 func (controller *CommentController) FindById(writer http.ResponseWriter, requests *http.Request, params httprouter.Params) {
 	commentId := params.ByName("commentId")
-	id, err := strconv.Atoi(commentId)
-	helper.PanicIfErrors(err)
 
-	result := controller.CommentService.FindById(requests.Context(), id)
+	result := controller.CommentService.FindById(requests.Context(), commentId)
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "Ok",

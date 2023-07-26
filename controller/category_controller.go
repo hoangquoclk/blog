@@ -7,7 +7,6 @@ import (
 	"example/blog/service"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"strconv"
 )
 
 type CategoryController struct {
@@ -34,10 +33,7 @@ func (controller *CategoryController) Update(writer http.ResponseWriter, request
 
 	categoryId := params.ByName("categoryId")
 
-	id, err := strconv.Atoi(categoryId)
-
-	helper.PanicIfErrors(err)
-	categoryUpdateRequest.Id = id
+	categoryUpdateRequest.Id = categoryId
 
 	controller.CategoryService.Update(requests.Context(), categoryUpdateRequest)
 	webResponse := response.WebResponse{Code: 200, Status: "Ok", Data: nil}
@@ -47,10 +43,8 @@ func (controller *CategoryController) Update(writer http.ResponseWriter, request
 
 func (controller *CategoryController) Delete(writer http.ResponseWriter, requests *http.Request, params httprouter.Params) {
 	categoryId := params.ByName("categoryId")
-	id, err := strconv.Atoi(categoryId)
-	helper.PanicIfErrors(err)
 
-	controller.CategoryService.Delete(requests.Context(), id)
+	controller.CategoryService.Delete(requests.Context(), categoryId)
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "Ok",
@@ -62,10 +56,8 @@ func (controller *CategoryController) Delete(writer http.ResponseWriter, request
 
 func (controller *CategoryController) FindById(writer http.ResponseWriter, requests *http.Request, params httprouter.Params) {
 	categoryId := params.ByName("categoryId")
-	id, err := strconv.Atoi(categoryId)
-	helper.PanicIfErrors(err)
 
-	result := controller.CategoryService.FindById(requests.Context(), id)
+	result := controller.CategoryService.FindById(requests.Context(), categoryId)
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "Ok",

@@ -1,9 +1,9 @@
 package response
 
 type PostResponse struct {
-	Id         int    `json:"id"`
+	Id         string `json:"id"`
 	Title      string `json:"title"`
-	CategoryId int    `json:"category_id"`
-	UserId     int    `json:"user_id"`
+	CategoryId string `json:"categoryId"`
+	UserId     string `json:"userId"`
 	Content    string `json:"content"`
 }

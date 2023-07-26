@@ -36,13 +36,13 @@ func (p *PostServiceImpl) Update(ctx context.Context, request request.PostUpdate
 	p.PostRepository.Update(ctx, post)
 }
 
-func (p *PostServiceImpl) Delete(ctx context.Context, postId int) {
+func (p *PostServiceImpl) Delete(ctx context.Context, postId string) {
 	post, err := p.PostRepository.FindById(ctx, postId)
 	helper.PanicIfErrors(err)
 	p.PostRepository.Delete(ctx, post.Id)
 }
 
-func (p *PostServiceImpl) FindById(ctx context.Context, postId int) response.PostResponse {
+func (p *PostServiceImpl) FindById(ctx context.Context, postId string) response.PostResponse {
 	post, err := p.PostRepository.FindById(ctx, postId)
 	helper.PanicIfErrors(err)
 	return response.PostResponse(post)

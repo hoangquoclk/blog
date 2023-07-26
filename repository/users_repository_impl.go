@@ -6,6 +6,7 @@ import (
 	"errors"
 	"example/blog/helper"
 	"example/blog/model"
+	"github.com/google/uuid"
 )
 
 type UserRepositoryImpl struct {
@@ -18,14 +19,13 @@ func NewUserRepository(Db *sql.DB) UserRepository {
 
 // Save implement UsersRepository
 func (u *UserRepositoryImpl) Save(ctx context.Context, user model.User) {
+	uuid := uuid.New()
 	tx, err := u.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "insert into users(username, password, email) values (?, ?, ?)"
-
-	_, errQuery := tx.ExecContext(ctx, SQL, user.Username, user.Password, user.Email)
-
+	SQL := "insert into users(id, username, password, email) values (?, ?, ?, ?)"
+	_, errQuery := tx.ExecContext(ctx, SQL, uuid, user.Username, user.Password, user.Email)
 	helper.PanicIfErrors(errQuery)
 }
 
@@ -42,7 +42,7 @@ func (u *UserRepositoryImpl) Update(ctx context.Context, user model.User) {
 }
 
 // Delete implements UsersRepository
-func (u *UserRepositoryImpl) Delete(ctx context.Context, userId int) {
+func (u *UserRepositoryImpl) Delete(ctx context.Context, userId string) {
 	tx, err := u.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
@@ -54,7 +54,7 @@ func (u *UserRepositoryImpl) Delete(ctx context.Context, userId int) {
 }
 
 // FindById implements UsersRepository
-func (u *UserRepositoryImpl) FindById(ctx context.Context, userId int) (model.User, error) {
+func (u *UserRepositoryImpl) FindById(ctx context.Context, userId string) (model.User, error) {
 	tx, err := u.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
@@ -81,7 +81,7 @@ func (u *UserRepositoryImpl) FindAll(ctx context.Context) []model.User {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, username from users"
+	SQL := "select id, username, password, email from users"
 	result, errQuery := tx.QueryContext(ctx, SQL)
 	helper.PanicIfErrors(errQuery)
 	defer result.Close()
@@ -90,7 +90,7 @@ func (u *UserRepositoryImpl) FindAll(ctx context.Context) []model.User {
 
 	for result.Next() {
 		user := model.User{}
-		err := result.Scan(&user.Id, &user.Username)
+		err := result.Scan(&user.Id, &user.Username, &user.Password, &user.Email)
 		helper.PanicIfErrors(err)
 		users = append(users, user)
 	}

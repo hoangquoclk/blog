@@ -36,13 +36,13 @@ func (u *UserServiceImpl) Update(ctx context.Context, request request.UserUpdate
 	u.UserRepository.Update(ctx, user)
 }
 
-func (u *UserServiceImpl) Delete(ctx context.Context, userId int) {
+func (u *UserServiceImpl) Delete(ctx context.Context, userId string) {
 	user, err := u.UserRepository.FindById(ctx, userId)
 	helper.PanicIfErrors(err)
 	u.UserRepository.Delete(ctx, user.Id)
 }
 
-func (u *UserServiceImpl) FindById(ctx context.Context, userId int) response.UserResponse {
+func (u *UserServiceImpl) FindById(ctx context.Context, userId string) response.UserResponse {
 	user, err := u.UserRepository.FindById(ctx, userId)
 	helper.PanicIfErrors(err)
 	return response.UserResponse(user)
