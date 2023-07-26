@@ -1,8 +1,8 @@
 package model
 
 type Comment struct {
-	Id      int    `json:"id"`
-	PostId  int    `json:"post_id"`
-	UserId  int    `json:"user_id"`
+	Id      string `json:"id"`
+	PostId  string `json:"postId"`
+	UserId  string `json:"userId"`
 	Content string `json:"content"`
 }

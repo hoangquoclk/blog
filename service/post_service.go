@@ -9,7 +9,7 @@ import (
 type PostService interface {
 	Create(ctx context.Context, request request.PostCreateRequest)
 	Update(ctx context.Context, request request.PostUpdateRequest)
-	Delete(ctx context.Context, userId int)
-	FindById(ctx context.Context, userId int) response.PostResponse
+	Delete(ctx context.Context, userId string)
+	FindById(ctx context.Context, userId string) response.PostResponse
 	FindAll(ctx context.Context) []response.PostResponse
 }

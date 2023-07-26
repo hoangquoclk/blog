@@ -7,7 +7,6 @@ import (
 	"example/blog/service"
 	"github.com/julienschmidt/httprouter"
 	"net/http"
-	"strconv"
 )
 
 type UserController struct {
@@ -34,10 +33,7 @@ func (controller *UserController) Update(writer http.ResponseWriter, requests *h
 
 	userId := params.ByName("userId")
 
-	id, err := strconv.Atoi(userId)
-
-	helper.PanicIfErrors(err)
-	userUpdateRequest.Id = id
+	userUpdateRequest.Id = userId
 
 	controller.UserService.Update(requests.Context(), userUpdateRequest)
 	webResponse := response.WebResponse{Code: 200, Status: "Ok", Data: nil}
@@ -47,10 +43,8 @@ func (controller *UserController) Update(writer http.ResponseWriter, requests *h
 
 func (controller *UserController) Delete(writer http.ResponseWriter, requests *http.Request, params httprouter.Params) {
 	userId := params.ByName("userId")
-	id, err := strconv.Atoi(userId)
-	helper.PanicIfErrors(err)
 
-	controller.UserService.Delete(requests.Context(), id)
+	controller.UserService.Delete(requests.Context(), userId)
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "Ok",
@@ -62,10 +56,8 @@ func (controller *UserController) Delete(writer http.ResponseWriter, requests *h
 
 func (controller *UserController) FindById(writer http.ResponseWriter, requests *http.Request, params httprouter.Params) {
 	userId := params.ByName("userId")
-	id, err := strconv.Atoi(userId)
-	helper.PanicIfErrors(err)
 
-	result := controller.UserService.FindById(requests.Context(), id)
+	result := controller.UserService.FindById(requests.Context(), userId)
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "Ok",

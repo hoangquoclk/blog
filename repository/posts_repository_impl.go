@@ -6,6 +6,7 @@ import (
 	"errors"
 	"example/blog/helper"
 	"example/blog/model"
+	uuid2 "github.com/google/uuid"
 )
 
 type PostRepositoryImpl struct {
@@ -18,13 +19,14 @@ func NewPostRepository(Db *sql.DB) PostRepository {
 
 // Save implement PostsRepository
 func (p *PostRepositoryImpl) Save(ctx context.Context, post model.Post) {
+	uuid := uuid2.New()
 	tx, err := p.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "insert into posts(title, category_id, user_id, content) values(?, ?, ?, ?)"
+	SQL := "insert into posts(id, title, categoryId, userId, content) values(?, ?, ?, ?, ?)"
 
-	_, errQuery := tx.ExecContext(ctx, SQL, post.Title, post.CategoryId, post.UserId, post.Content)
+	_, errQuery := tx.ExecContext(ctx, SQL, uuid, post.Title, post.CategoryId, post.UserId, post.Content)
 
 	helper.PanicIfErrors(errQuery)
 }
@@ -35,14 +37,14 @@ func (p *PostRepositoryImpl) Update(ctx context.Context, post model.Post) {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "update posts set title=:title, category_id=:category_id, user_id=:user_id, content=:content where id=:id"
+	SQL := "update posts set title=:title, categoryId=:categoryId, userId=:userId, content=:content where id=:id"
 
 	_, errQuery := tx.ExecContext(ctx, SQL, post)
 	helper.PanicIfErrors(errQuery)
 }
 
 // Delete implements PostsRepository
-func (p *PostRepositoryImpl) Delete(ctx context.Context, postId int) {
+func (p *PostRepositoryImpl) Delete(ctx context.Context, postId string) {
 	tx, err := p.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
@@ -54,12 +56,12 @@ func (p *PostRepositoryImpl) Delete(ctx context.Context, postId int) {
 }
 
 // FindById implements PostsRepository
-func (p *PostRepositoryImpl) FindById(ctx context.Context, postId int) (model.Post, error) {
+func (p *PostRepositoryImpl) FindById(ctx context.Context, postId string) (model.Post, error) {
 	tx, err := p.Db.Begin()
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, title, category_id, user_id, content from posts where id=?"
+	SQL := "select id, title, categoryId, userId, content from posts where id=?"
 	result, errExec := tx.QueryContext(ctx, SQL, postId)
 	helper.PanicIfErrors(errExec)
 	defer result.Close()
@@ -81,7 +83,7 @@ func (p *PostRepositoryImpl) FindAll(ctx context.Context) []model.Post {
 	helper.PanicIfErrors(err)
 	defer helper.CommitOrRollback(tx)
 
-	SQL := "select id, title, category_id, user_id, content from posts"
+	SQL := "select id, title, categoryId, userId, content from posts"
 	result, errQuery := tx.QueryContext(ctx, SQL)
 	helper.PanicIfErrors(errQuery)
 	defer result.Close()

@@ -1,6 +1,6 @@
 package request
 
 type CommentUpdateRequest struct {
-	Id      int    `json:"id"`
+	Id      string `json:"id"`
 	Content string `json:"content"`
 }
